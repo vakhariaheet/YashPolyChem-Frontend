@@ -1,5 +1,5 @@
 import React, { useEffect,useState } from "react";
-import { Container,Card } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import DealerCard from '../Components/DealerCard.component';
 export interface DealersProps {}
 
