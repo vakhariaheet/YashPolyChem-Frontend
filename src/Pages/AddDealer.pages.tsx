@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react'
-import { Container,Form,Button } from 'react-bootstrap';
 import DealerForm from '../Components/DealerForm.component';
+import {useHistory} from "react-router-dom"
 export interface AddDealerProps {
     
 }
@@ -15,8 +15,18 @@ const AddDealer: React.SFC<AddDealerProps> = () => {
     name: "",
     email:""
   })
+  const history = useHistory();
+  const onClick = () => {
+    fetch("http://localhost:5000/add/dealer", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({dealer})
+    }).then(() =>history.push("/dealers"));
+  }
     return (
-      <DealerForm dealer={dealer} setDealer={setDealer} onClick={() => console.log("hello")} />
+      <DealerForm dealer={dealer} setDealer={setDealer} onClick={onClick} />
     );
 }
  

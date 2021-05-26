@@ -32,6 +32,7 @@ email: "",
                 setDealer({ type: "ALL", payloadValue: data });
                 
           });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     const onUpdate = () => {
         fetch("http://localhost:5000/dealers/update", {

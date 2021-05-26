@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Table, Form, Container, Button, Row, Col } from "react-bootstrap";
+import React, { useState } from "react";
+import {  Form, Container, Button, Row, Col } from "react-bootstrap";
 import singleHtmlTemplate from "../utils/Single.html";
 import groupHtmlTemplate from "../utils/Group.html";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -39,7 +39,9 @@ function Upload() {
       console.log(arr)
     let final = 0;
     arr.map((num) => {
-      final += num;
+        final += num;
+        // eslint-disable-next-line array-callback-return
+        return;
     });
     return parseFloat(final.toString()).toFixed(3);
   };
@@ -165,8 +167,9 @@ function Upload() {
                       groups[0].indexOf(dealer) !== 0) ||
                     (groups[1].indexOf(dealer) !== -1 &&
                     groups[1].indexOf(dealer) !== 0) 
-                  )
-                    return;
+                  // eslint-disable-next-line array-callback-return
+                  )return;
+                    
 
                   return <option>{dealer}</option>;
                 })}

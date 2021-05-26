@@ -8,6 +8,7 @@ export interface DealerCardProps {
         email: string;
         _id?:string
     }
+    
 }
  
 const DealerCard: React.FC<DealerCardProps> = ({dealer}) => {
