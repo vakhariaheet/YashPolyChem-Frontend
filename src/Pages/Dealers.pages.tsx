@@ -6,7 +6,7 @@ export interface DealersProps {}
 const Dealers: React.SFC<DealersProps> = () => {
     const [dealers, setDealers] = useState<Array<{ name: string, email: string, id: string; _id:string}>>()
   useEffect(() => {
-    fetch("http://localhost:5000/dealers").then((resp) => resp.json()).then(dealers => setDealers(dealers));
+    fetch("https://enigmatic-woodland-79956.herokuapp.com/dealers").then((resp) => resp.json()).then(dealers => setDealers(dealers));
   }, []);
     if (!dealers) {
         return <Container>Loading...</Container>

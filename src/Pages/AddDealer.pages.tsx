@@ -17,7 +17,7 @@ const AddDealer: React.SFC<AddDealerProps> = () => {
   })
   const history = useHistory();
   const onClick = () => {
-    fetch("http://localhost:5000/add/dealer", {
+    fetch("https://enigmatic-woodland-79956.herokuapp.com/add/dealer", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'

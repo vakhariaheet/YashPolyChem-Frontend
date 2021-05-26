@@ -26,7 +26,7 @@ email: "",
 });
     const history = useHistory();
     useEffect(() => {
-        fetch(`http://localhost:5000/dealers/${dealerID}`)
+        fetch(`https://enigmatic-woodland-79956.herokuapp.com/dealers/${dealerID}`)
           .then((response) => response.json())
             .then((data) => {
                 setDealer({ type: "ALL", payloadValue: data });
@@ -35,7 +35,7 @@ email: "",
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     const onUpdate = () => {
-        fetch("http://localhost:5000/dealers/update", {
+        fetch("https://enigmatic-woodland-79956.herokuapp.com/dealers/update", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -84,7 +84,7 @@ function Upload() {
     fr.onload = (event) => {
       const binaryString = event.target?.result;
 
-      fetch("http://localhost:5000/upload", {
+      fetch("https://enigmatic-woodland-79956.herokuapp.com/upload", {
         method: "POST",
         body: JSON.stringify({ binaryString }),
         headers: {

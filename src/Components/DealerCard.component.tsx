@@ -14,7 +14,7 @@ export interface DealerCardProps {
 const DealerCard: React.FC<DealerCardProps> = ({dealer}) => {
     const [toggleModal, setToggleModal] = useState(false)
     const onDelete = () => {
-        fetch(`http://localhost:5000/dealers/${dealer._id}`, {
+        fetch(`https://enigmatic-woodland-79956.herokuapp.com/dealers/${dealer._id}`, {
             method: "DELETE", 
         }).then(resp => {
             setToggleModal(false)
