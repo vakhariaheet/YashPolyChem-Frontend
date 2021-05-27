@@ -1,5 +1,7 @@
-import React from 'react'
-import { Table } from 'react-bootstrap';
+/* eslint-disable array-callback-return */
+import React from "react";
+import DataTable from "../Pages/DataTable";
+import {uid} from "uid"
 export interface MultipleDealerProps {
   dealers: Array<string>;
   groupOrders: Array<{
@@ -18,61 +20,46 @@ export interface MultipleDealerProps {
       email: string;
     }>;
   };
-    Sum:(arr: Array<number>) => string;
-  
+  Sum: (arr: Array<number>) => string;
 }
- 
-const MultipleDealer: React.SFC<MultipleDealerProps> = ({orders,dealers, groupOrders,Sum}) => {
-    return (
-      <Table>
-        <thead>
-          <tr>
-            <th>Trans. Date</th>
-            <th>TTNO</th>
-            
-            {dealers
-              .map(
-                (dealer) => 
-              <th>{dealer}</th>
-              
-              )
-              }
-          </tr>
-        </thead>
-        <tbody>
-          {groupOrders.map((order) => (
-            <tr>
-              <td>{order["Tran. Date"]}</td>
-              <td>{order["TTNO"]}</td>
-            
-                  {dealers.map((_, i) => {
-                      if (i === dealers.indexOf(order["Name"])) {
-                        return (
-                          <td>
-                            {parseFloat(order["Bill Qty"].toString()).toFixed(
-                              3
-                            )}
-                          </td>
-                        );
-                      } else {
-                        return <td>0.000</td>;
-                      }
-            })}
-            </tr>
-          ))}
 
-          <tr>
-            <td></td>
-            <td>total</td>
-            {dealers.map((dealer) => (
-              <td>
-                {Sum(orders[dealer].map((order) => Number(order["Bill Qty"])))}
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </Table>
-    );
-}
- 
+const MultipleDealer: React.SFC<MultipleDealerProps> = ({
+  orders,
+  dealers,
+  groupOrders,
+  Sum,
+}) => {
+  const rows = groupOrders.map((order) => {
+    const row: { [coulumn: string]: string | number } = {
+      id: uid(),
+      "Tran. Date": order["Tran. Date"],
+      TTNO: order.TTNO,
+    };
+    dealers.map((dealer, i) => {
+      if (i === dealers.indexOf(order["Name"])) {
+        row[dealer] = order["Bill Qty"];
+        return;
+      } else {
+        row[dealer] = 0.0;
+        return;
+      }
+    });
+
+    return row;
+  });
+  return (
+    <DataTable
+      rows={rows}
+      columns={[
+        { field: "Tran. Date", headerName: "Date", flex: 1 },
+        { field: "TTNO", headerName: "TTNO", flex: 1 },
+        ...dealers.map((dealer) => {
+          console.log(dealer, "columns");
+          return { field: dealer, headerName: dealer, flex: 1 };
+        }),
+      ]}
+    />
+  );
+};
+
 export default MultipleDealer;

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Table } from "react-bootstrap";
+import { uid } from "uid";
+import DataTable from '../Pages/DataTable';
 export interface SingleDealerProps {
   orders: {
     [dealer: string]: Array<{
@@ -15,27 +16,23 @@ export interface SingleDealerProps {
  
 const SingleDealer: React.SFC<SingleDealerProps> = ({orders,currentDealer}) => {
     return (
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Trans. Date</th>
-            <th>TTNO</th>
-            <th>Qty</th>
-            <th>Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders[currentDealer].map((order) => (
-            <tr>
-              <th>{order["Tran. Date"]}</th>
-              <th>{order.TTNO}</th>
-              <th>{parseFloat(order["Bill Qty"].toString()).toFixed(3)}</th>
-              <th>{order.Name}</th>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <DataTable
+        rows={orders[currentDealer].map((order) => {
+          return {
+            ...order,
+            id: uid(),
+            "Bill Qty": order["Bill Qty"],
+          };
+        })}
+        columns={[
+          { field: "Tran. Date", headerName: "Date", flex:1 },
+          { field: "TTNO", headerName: "TTNO", flex:1 },
+          { field: "Bill Qty", headerName: "QTY", flex:1 },
+        ]}
+        checkboxSelection={false}
+      />
     );
 }
+
  
 export default SingleDealer;

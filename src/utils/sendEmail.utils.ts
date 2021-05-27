@@ -1,5 +1,6 @@
 import emailjs from "emailjs-com";
 import { init } from "emailjs-com";
+import { Dispatch, SetStateAction } from "react";
 init("user_adbjg0UTdltr9SLemobjd");
 
 interface sendEmailProps {
@@ -7,15 +8,31 @@ interface sendEmailProps {
   name: string;
   lastDate: string;
   html: string;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
-const sendEmail = (props: sendEmailProps) => {
-  emailjs.send("service_zxt47mb", "template_e91m0uj", props).then(
-    function (response) {
-      console.log("SUCCESS!", response.status, response.text);
-    },
-    function (error) {
-      console.log("FAILED...", error);
-    }
-  );
+const sendEmail = ({
+  to,
+  name,
+  lastDate,
+  html,
+  setIsLoading,
+}: sendEmailProps) => {
+  setIsLoading(true);
+  emailjs
+    .send("service_zxt47mb", "template_e91m0uj", {
+      to,
+      name,
+      lastDate,
+      html,
+    })
+    .then(
+      function (response) {
+        setIsLoading(false);
+      },
+      function (error) {
+        setIsLoading(false);
+        alert(error.message);
+      }
+    );
 };
 export default sendEmail;

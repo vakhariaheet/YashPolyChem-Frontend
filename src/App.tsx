@@ -6,6 +6,8 @@ import AddDealer from './Pages/AddDealer.pages'
 import { Navbar, Nav } from "react-bootstrap";
 import Dealers from './Pages/Dealers.pages';
 import UpdateDealer from './Pages/UpdateDealer.pages';
+import Orders from './Pages/Orders.pages';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
@@ -32,7 +34,8 @@ function App() {
       <Switch>
         <Route path="/dealers" component={Dealers} />
         <Route path="/add/dealer" component={AddDealer} />
-        <Route path="/update/d/:dealer" component={UpdateDealer}/>
+        <Route path="/update/d/:dealer" component={UpdateDealer} />
+        <Route path="/orders" component={Orders}/>
         <Route path="/" component={Upload} />
       </Switch>
     </div>
