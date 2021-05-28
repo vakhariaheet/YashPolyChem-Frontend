@@ -62,13 +62,10 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
     });
     return parseFloat(final.toString()).toFixed(3);
   };
-  const convertToDate = (date: string) => {
-    const [day, month, year] = date.split(".");
-    return new Date(`${year}-${month}-${day}`);
-  };
+
   const lastDate = (arr: Array<string>) => {
     const dates = arr
-      .map((date) => convertToDate(date))
+      .map((date) => new Date(date))
       .sort((a, b) => a.getTime() - b.getTime());
     const date = dates[dates.length - 1];
     return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
@@ -129,8 +126,8 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
               setGroupOrders(
                 tempGroupOrders.sort(
                   (a, b) =>
-                    convertToDate(a["Tran. Date"]).getTime() -
-                    convertToDate(b["Tran. Date"]).getTime()
+                    new Date(a["Tran. Date"]).getTime() -
+                    new Date(b["Tran. Date"]).getTime()
                 )
               );
             }}
@@ -161,7 +158,7 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
                 (groups[0].indexOf(dealer) !== -1 &&
                   groups[0].indexOf(dealer) !== 0) ||
                 (groups[1].indexOf(dealer) !== -1 &&
-                  groups[1].indexOf(dealer) !== 0)
+                  groups[1].indexOf(dealer) !== 0) 
               )
                 // eslint-disable-next-line array-callback-return
                 return;

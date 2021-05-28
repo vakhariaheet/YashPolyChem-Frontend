@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DataGrid, GridColDef,GridToolbar} from "@material-ui/data-grid";
+import { DataGrid, GridColDef,GridToolbar,GridRowSelectedParams} from "@material-ui/data-grid";
 
 
 export interface DataTableProps {
@@ -7,9 +7,10 @@ export interface DataTableProps {
   columns: GridColDef[];
   checkboxSelection?: boolean;
   height?: number | string;
+  onRowSelected?: (param: GridRowSelectedParams) => void ;
 }
  
-const DataTable: React.SFC<DataTableProps> = ({rows,columns,checkboxSelection=false,height = 500}) => {
+const DataTable: React.SFC<DataTableProps> = ({rows,columns,checkboxSelection=false,height = 500,onRowSelected = (param: GridRowSelectedParams) => {}}) => {
   return (
     <div style={{ height, width: "100%" }}>
       <DataGrid
@@ -20,6 +21,7 @@ const DataTable: React.SFC<DataTableProps> = ({rows,columns,checkboxSelection=fa
         components={{
           Toolbar: GridToolbar,
         }}
+        onRowSelected={onRowSelected}
       />
     </div>
   );

@@ -40,7 +40,7 @@ const [currentDealer, setCurrentDealer] = useState<string>("");
     fr.onload = (event) => {
       const binaryString = event.target?.result;
 
-      fetch("https://enigmatic-woodland-79956.herokuapp.com/upload", {
+      fetch("http://localhost:5005/upload", {
         method: "POST",
         body: JSON.stringify({ binaryString }),
         headers: {
