@@ -25,7 +25,7 @@ const Orders: React.SFC<OrdersProps> = () => {
   //     }>
   //   >([]);
     useEffect(() => {
-        fetch("http://localhost:5005/orders").then((response) =>response.json()).then((orders)=> setOrders(orders));
+        fetch("https://enigmatic-woodland-79956.herokuapp.com/orders").then((response) =>response.json()).then((orders)=> setOrders(orders));
     },[])
     if (!orders) {
         return (
