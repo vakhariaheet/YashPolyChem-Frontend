@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react'
+import React, { useReducer,useState } from 'react'
 import DealerForm from '../Components/DealerForm.component';
 import {useHistory} from "react-router-dom"
 export interface AddDealerProps {
@@ -10,6 +10,7 @@ const AddDealer: React.SFC<AddDealerProps> = () => {
     const { type, payloadValue } = action;
     return { ...state, [type.toLowerCase()]: payloadValue };
   }
+  const [err,setErr]= useState(false)
   const [dealer, setDealer] = useReducer(dealerReducer,{
     id: "",
     name: "",
@@ -23,10 +24,13 @@ const AddDealer: React.SFC<AddDealerProps> = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({dealer})
-    }).then(() =>history.push("/dealers"));
+    }).then(response => {
+      if (response.status === 500) return setErr(true);
+      return history.push("/dealers")
+    });
   }
     return (
-      <DealerForm dealer={dealer} setDealer={setDealer} onClick={onClick} />
+      <DealerForm dealer={dealer} setDealer={setDealer} onClick={onClick} err={err} />
     );
 }
  

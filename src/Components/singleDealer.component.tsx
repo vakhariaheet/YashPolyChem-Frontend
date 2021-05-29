@@ -1,15 +1,9 @@
 import React from 'react';
-import { uid } from "uid";
+import { OrderProp } from '../interfaces';
 import DataTable from '../Pages/DataTable';
 export interface SingleDealerProps {
   orders: {
-    [dealer: string]: Array<{
-      "Bill Qty": number;
-      Name: string;
-      TTNO: string;
-      "Tran. Date": string;
-      email: string;
-    }>;
+    [dealer: string]: Array<OrderProp>;
   };
    currentDealer: string;
 }
@@ -17,15 +11,9 @@ export interface SingleDealerProps {
 const SingleDealer: React.SFC<SingleDealerProps> = ({orders,currentDealer}) => {
     return (
       <DataTable
-        rows={orders[currentDealer].map((order) => {
-          return {
-            ...order,
-            id: uid(),
-            "Bill Qty": order["Bill Qty"],
-          };
-        })}
+        rows={orders[currentDealer]}
         columns={[
-          { field: "Tran. Date", headerName: "Date", flex:1 },
+          { field: "date", headerName: "Date", flex:1 },
           { field: "TTNO", headerName: "TTNO", flex:1 },
           { field: "Bill Qty", headerName: "QTY", flex:1 },
         ]}

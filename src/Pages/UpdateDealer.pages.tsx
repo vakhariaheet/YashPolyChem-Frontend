@@ -1,4 +1,4 @@
-import React, { useEffect,useReducer } from 'react'
+import React, { useEffect,useReducer,useState } from 'react'
 import {useHistory, useParams} from "react-router-dom"
 import DealerForm from '../Components/DealerForm.component'
 export interface UpdateDealerProps {
@@ -7,6 +7,7 @@ export interface UpdateDealerProps {
  
 const UpdateDealer: React.SFC<UpdateDealerProps> = () => {
     const { dealer:dealerID } = useParams<{ dealer: string }>();
+    const [err ,setErr]= useState<boolean>(false)
 const dealerReducer = (
   state: { id: string; name: string; email: string; _id?: "" },
   action: {
@@ -28,7 +29,9 @@ email: "",
     useEffect(() => {
         fetch(`https://enigmatic-woodland-79956.herokuapp.com/dealers/${dealerID}`)
           .then((response) => response.json())
-            .then((data) => {
+          .then((data) => {
+            const { err } = data;
+            if (err) return setErr(true);
                 setDealer({ type: "ALL", payloadValue: data });
                 
           });
@@ -48,7 +51,7 @@ email: "",
           .then(() => history.push("/dealers"));
     }
     return (
-        <DealerForm dealer={dealer} setDealer={setDealer} onClick={onUpdate}/>
+      <DealerForm dealer={dealer} setDealer={setDealer} onClick={onUpdate} err={ err}/>
      );
 }
  

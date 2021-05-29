@@ -4,6 +4,7 @@ import groupHtmlTemplate from "../utils/Group.html";
 import sendEmail from "../utils/sendEmail.utils";
 import SingleDealer from "../Components/singleDealer.component";
 import MultipleDealer from "../Components/MultipleDealer.component";
+import { OrderProp } from "../interfaces";
 import {
   Button,
   Box,
@@ -15,13 +16,7 @@ import {
 
 export interface EmailPreviewProps {
   orders: {
-    [dealer: string]: Array<{
-      "Bill Qty": number;
-      Name: string;
-      TTNO: string;
-      "Tran. Date": string;
-      email: string;
-    }>;
+    [dealer: string]: Array<OrderProp>;
   };
   setCurrentDealer: Dispatch<SetStateAction<string>>;
   currentDealer: string;
@@ -31,10 +26,10 @@ export interface EmailPreviewProps {
       id: string;
       email: string;
       name: string;
+      order: number;
     };
   };
 }
-
 const EmailPreview: React.SFC<EmailPreviewProps> = ({
   orders,
   dealersInfo,
@@ -42,16 +37,7 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
   setCurrentDealer,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [groupOrders, setGroupOrders] =
-    useState<
-      Array<{
-        "Bill Qty": number;
-        Name: string;
-        TTNO: string;
-        "Tran. Date": string;
-        email: string;
-      }>
-    >();
+  const [groupOrders, setGroupOrders] = useState<Array<OrderProp>>();
   const Sum = (arr: Array<number>) => {
     console.log(arr);
     let final = 0;
@@ -65,7 +51,10 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
 
   const lastDate = (arr: Array<string>) => {
     const dates = arr
-      .map((date) => new Date(date))
+      .map((wholedate) => {
+        const [date, month, year] = wholedate.split("/");
+        return new Date(`${year}-${month}-${date}`);
+      })
       .sort((a, b) => a.getTime() - b.getTime());
     const date = dates[dates.length - 1];
     return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
@@ -75,7 +64,7 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
       return sendEmail({
         to: dealersInfo[dealer].email,
         name: dealer,
-        lastDate: lastDate(orders[dealer].map((order) => order["Tran. Date"])),
+        lastDate: lastDate(orders[dealer].map((order) => order.date)),
         html: singleHtmlTemplate({ Sum, orders, dealer }),
         setIsLoading,
       });
@@ -86,14 +75,14 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
           .map((name) => `${name} ${dealersInfo[name].email} `)
           .join("")}`,
         name: dealer.join("|"),
-        lastDate: lastDate(groupOrders.map((order) => order["Tran. Date"])),
+        lastDate: lastDate(groupOrders.map((order) => order.date)),
         html: groupHtmlTemplate({
           Sum,
           orders,
           dealers: dealer,
           groupOrders,
         }),
-        setIsLoading
+        setIsLoading,
       });
     }
   };
@@ -115,19 +104,13 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
                 return setCurrentDealer(target.value);
               if (!orders) return;
               const dealer = target.value.split("|");
-              let tempGroupOrders: Array<{
-                "Bill Qty": number;
-                Name: string;
-                TTNO: string;
-                "Tran. Date": string;
-                email: string;
-              }> = [];
+              let tempGroupOrders: Array<OrderProp> = [];
               dealer.map((name) => tempGroupOrders.push(...orders[name]));
               setGroupOrders(
                 tempGroupOrders.sort(
                   (a, b) =>
-                    new Date(a["Tran. Date"]).getTime() -
-                    new Date(b["Tran. Date"]).getTime()
+                    new Date(a.date).getTime() -
+                    new Date(b.date).getTime()
                 )
               );
             }}
@@ -135,7 +118,7 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
               id: "dealer-native-simple",
             }}
           >
-            {Object.keys(orders).map((dealer) => {
+            {Object.keys(dealersInfo).map((dealer) => {
               const groups = [
                 ["KUTCH", "PANOLI(J)", "PANOLI(N)"],
                 ["AARTI Bhachau", "AARTI Jdia", "AARTI Vapi"],
@@ -158,7 +141,8 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
                 (groups[0].indexOf(dealer) !== -1 &&
                   groups[0].indexOf(dealer) !== 0) ||
                 (groups[1].indexOf(dealer) !== -1 &&
-                  groups[1].indexOf(dealer) !== 0) 
+                  groups[1].indexOf(dealer) !== 0) ||
+                dealersInfo[dealer].order === 0
               )
                 // eslint-disable-next-line array-callback-return
                 return;
@@ -194,7 +178,11 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
             )
           }
         >
-                  {isLoading ? <CircularProgress size={20}/> :  `Email ${currentDealer}`}
+          {isLoading ? (
+            <CircularProgress size={20} />
+          ) : (
+            `Email ${currentDealer}`
+          )}
         </Button>
       </Box>
     </>

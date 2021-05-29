@@ -1,24 +1,12 @@
 /* eslint-disable array-callback-return */
 import React from "react";
 import DataTable from "../Pages/DataTable";
-import {uid} from "uid"
+import { OrderProp } from '../interfaces';
 export interface MultipleDealerProps {
   dealers: Array<string>;
-  groupOrders: Array<{
-    "Bill Qty": number;
-    Name: string;
-    TTNO: string;
-    "Tran. Date": string;
-    email: string;
-  }>;
+  groupOrders: Array<OrderProp>;
   orders: {
-    [dealer: string]: Array<{
-      "Bill Qty": number;
-      Name: string;
-      TTNO: string;
-      "Tran. Date": string;
-      email: string;
-    }>;
+    [dealer: string]: Array<OrderProp>;
   };
   Sum: (arr: Array<number>) => string;
 }
@@ -31,8 +19,7 @@ const MultipleDealer: React.SFC<MultipleDealerProps> = ({
 }) => {
   const rows = groupOrders.map((order) => {
     const row: { [coulumn: string]: string | number } = {
-      id: uid(),
-      "Tran. Date": order["Tran. Date"],
+      ...order,
       TTNO: order.TTNO,
     };
     dealers.map((dealer, i) => {
@@ -51,10 +38,10 @@ const MultipleDealer: React.SFC<MultipleDealerProps> = ({
     <DataTable
       rows={rows}
       columns={[
-        { field: "Tran. Date", headerName: "Date", flex: 1 },
+        { field: "date", headerName: "Date", flex: 1 },
         { field: "TTNO", headerName: "TTNO", flex: 1 },
         ...dealers.map((dealer) => {
-          console.log(dealer, "columns");
+        
           return { field: dealer, headerName: dealer, flex: 1 };
         }),
       ]}

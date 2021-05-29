@@ -1,19 +1,21 @@
 import React, { Dispatch,MouseEventHandler } from "react";
 import { Container, Form, Button } from "react-bootstrap";
+import { Alert, AlertTitle } from '@material-ui/lab';
 export interface DealerFormProps {
   dealer: {
     id: string;
     name: string;
     email: string;
   };
+  err: boolean;
   setDealer: Dispatch<{ type: string; payloadValue: string }>;
   onClick: MouseEventHandler<HTMLElement>;
 }
 
-const DealerForm: React.SFC<DealerFormProps> = ({ dealer, setDealer,onClick }) => {
+const DealerForm: React.SFC<DealerFormProps> = ({ dealer, setDealer,onClick,err }) => {
   return (
     <Container>
-      <Form onSubmit={(e)=> e.preventDefault()}>
+      <Form onSubmit={(e) => e.preventDefault()}>
         <Form.Group>
           <Form.Label>Dealer Name</Form.Label>
           <Form.Control
@@ -54,6 +56,12 @@ const DealerForm: React.SFC<DealerFormProps> = ({ dealer, setDealer,onClick }) =
         <Button variant="primary" onClick={onClick}>
           Submit
         </Button>
+        {err && (
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            Dealer Already exists!
+          </Alert>
+        )}
       </Form>
     </Container>
   );

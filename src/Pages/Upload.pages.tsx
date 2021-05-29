@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { Form, Container, Row, Col } from "react-bootstrap";
 
-import{ Button, CircularProgress }from "@material-ui/core";
+import { Button, CircularProgress } from "@material-ui/core";
+import { Alert, AlertTitle } from '@material-ui/lab';
 import EmailPreview from '../Components/EmailPreview.components';
+import { OrderProp } from '../interfaces';
 
+// 
 
 function Upload() {
   const [file, setFile] = useState<FileList>();
 const [currentDealer, setCurrentDealer] = useState<string>("");
   const [uploadLoading, setUploadLoading] = useState<boolean>(false);
+  const [err,setErr] = useState<boolean>(false);
   const [dealersInfo, setDealersInfo] =
     useState<{
       [dealer: string]: {
@@ -16,17 +20,12 @@ const [currentDealer, setCurrentDealer] = useState<string>("");
         id: string;
         email: string;
         name: string;
+        order: number;
       };
     }>();
   const [orders, setOrders] =
     useState<{
-      [dealer: string]: Array<{
-        "Bill Qty": number;
-        Name: string;
-        TTNO: string;
-        "Tran. Date": string;
-        email: string;
-      }>;
+      [dealer: string]: Array<OrderProp>;
     }>();
   const onFileInput = (e: any) => {
     console.log(e.target.files);
@@ -49,12 +48,19 @@ const [currentDealer, setCurrentDealer] = useState<string>("");
       })
         .then((resp) => resp.json())
         .then((data) => {
-          const { dealerOrder, dealersInfo } = data;
-          console.log(data);
+          const { dealerOrder, dealersInfo,err } = data;
+          if (err)  {
+            setUploadLoading(false);
+            setErr(true)
+            return 
+          };
           setOrders(dealerOrder);
           setCurrentDealer(Object.keys(dealerOrder)[0]);
           setDealersInfo(dealersInfo);
           setUploadLoading(false);
+        }).catch(err => {
+          console.log(err)
+          alert("Duplicate");
         });
     };
   };
@@ -68,6 +74,7 @@ const [currentDealer, setCurrentDealer] = useState<string>("");
               label={file ? file[0].name : "Input"}
               custom
               onChange={onFileInput}
+              accept=".xlsx"
             />
           </Form>
         </Col>
@@ -81,6 +88,12 @@ const [currentDealer, setCurrentDealer] = useState<string>("");
           </Button>
         </Col>
       </Row>
+      {err && (
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          The Excel File has Duplicate Data
+        </Alert>
+      )}
       {orders && currentDealer && dealersInfo && (
         <EmailPreview
           orders={orders}

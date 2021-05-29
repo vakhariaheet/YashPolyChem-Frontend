@@ -1,13 +1,9 @@
+import { OrderProp } from "../interfaces";
+
 interface SingleProps {
   Sum: (arr: Array<number>) => number | string;
   orders: {
-    [dealer: string]: Array<{
-      "Bill Qty": number;
-      Name: string;
-      TTNO: string;
-      "Tran. Date": string;
-      email: string;
-    }>;
+    [dealer: string]: Array<OrderProp>;
   };
   dealer: string;
 }
@@ -16,8 +12,8 @@ const Single = ({ Sum, orders, dealer }: SingleProps) => {
     [date: string]: number;
   } = {};
   orders[dealer].map((order) => {
-    return (dateFilter[order["Tran. Date"]] =
-      dateFilter[order["Tran. Date"]] || 0 + Number(order["Bill Qty"]));
+    return (dateFilter[order.date] =
+      dateFilter[order.date] || 0 + Number(order["Bill Qty"]));
   });
   return `
       <html>
@@ -46,7 +42,7 @@ const Single = ({ Sum, orders, dealer }: SingleProps) => {
           .map(
             (order) => `
           <tr>
-            <td>${order["Tran. Date"]}</td>
+            <td>${order.date}</td>
             <td>${order["TTNO"]}</td>
             <td>${parseFloat(order["Bill Qty"].toString()).toFixed(3)}</td>
             <td>${order["Name"]}</td>

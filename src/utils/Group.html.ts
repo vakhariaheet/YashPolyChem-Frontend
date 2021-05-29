@@ -1,22 +1,12 @@
+import { OrderProp } from "../interfaces";
+
 interface GroupProp {
   Sum: (arr: Array<number>) => number | string;
   orders: {
-    [dealer: string]: Array<{
-      "Bill Qty": number;
-      Name: string;
-      TTNO: string;
-      "Tran. Date": string;
-      email: string;
-    }>;
+    [dealer: string]: Array<OrderProp>;
   };
   dealers: Array<string>;
-  groupOrders: Array<{
-    "Bill Qty": number;
-    Name: string;
-    TTNO: string;
-    "Tran. Date": string;
-    email: string;
-  }>;
+  groupOrders: Array<OrderProp>;
 }
 const Group = ({ Sum, orders, dealers, groupOrders }: GroupProp) => {
   const dateFilter: {
@@ -24,11 +14,11 @@ const Group = ({ Sum, orders, dealers, groupOrders }: GroupProp) => {
   } = {};
   dealers.map((dealer, i) =>
     orders[dealer].map((order) => {
-      if (!dateFilter[order["Tran. Date"]]) {
-        dateFilter[order["Tran. Date"]] = [0, 0, 0];
+      if (!dateFilter[order.date]) {
+        dateFilter[order.date] = [0, 0, 0];
       }
-      return (dateFilter[order["Tran. Date"]][i] =
-        dateFilter[order["Tran. Date"]][i] || 0 + Number(order["Bill Qty"]));
+      return (dateFilter[order.date][i] =
+        dateFilter[order.date][i] || 0 + Number(order["Bill Qty"]));
     })
   );
 
@@ -64,7 +54,7 @@ const Group = ({ Sum, orders, dealers, groupOrders }: GroupProp) => {
             .map(
               (order) => `
             <tr>
-             <td>${order["Tran. Date"]}</td>
+             <td>${order.date}</td>
             <td>${order["TTNO"]}</td>
            ${dealers
              .map((_, i) => {

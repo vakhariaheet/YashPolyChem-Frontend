@@ -16,23 +16,24 @@ const Report: React.SFC<ReportProps> = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [rows, setRows] = useState<
-    {
+    Array<{
       name: string;
-      MTD: number;
-    }[]
+      MTD: string;
+      daily: string;
+    }>
   >([]);
   const [date, setDate] = useState({
     up: "",
-    low:""
+    low: "",
   });
-  const Sum = (arr: Array<number>): number => {
+  const Sum = (arr: Array<number>): string => {
     let final = 0;
     arr.map((num) => {
       final += num;
       // eslint-disable-next-line array-callback-return
       return;
     });
-    return Number(final.toFixed(2));
+    return final.toFixed(3);
   };
   useEffect(() => {
     setIsLoading(true);
@@ -43,7 +44,7 @@ const Report: React.SFC<ReportProps> = () => {
           const row = {
             id: uid(),
             name: dealer,
-            daily: data.tOrders[dealer],
+            daily: parseFloat(data.tOrders[dealer].toString()).toFixed(3),
             MTD:
               Sum(
                 data.orders[dealer].map(
@@ -55,10 +56,10 @@ const Report: React.SFC<ReportProps> = () => {
                     id: string;
                   }) => Number(order["Bill Qty"])
                 )
-              ) || 0.0,
+              ) || '0.000',
           };
 
-          setDate({low:data.lowerDate, up:data.upperDate});
+          setDate({ low: data.lowerDate, up: data.upperDate });
           setRows((prevRows) => [...Array.from(new Set([...prevRows, row]))]);
         });
         setIsLoading(false);
@@ -75,27 +76,39 @@ const Report: React.SFC<ReportProps> = () => {
     doc.setFillColor("#331E38");
     doc.setFontSize(20);
     doc.text(
-      `${new Date(date.up).toDateString()} to ${new Date(
-        date.low
+      `${new Date(date.low).toDateString()} to ${new Date(
+        date.up
       ).toDateString()}`,
       300,
       50,
       { align: "center" }
     );
+    const today = new Date();
+
     autoTable(doc, {
-      body: rows,
+      body: [
+        ...rows,
+        {
+          name: "Total",
+          daily: 
+            Sum(rows.map((row) => Number(row.daily))),
+          MTD: Sum(rows.map((row) => Number(row.MTD))),
+        },
+      ],
       columns: [
         { header: "Name", dataKey: "name" },
-        { header: "Daily", dataKey: "daily" },
+        { header: `${today.getDate()}/${today.getMonth() +1}/${today.getFullYear()}`, dataKey: "daily" },
         { header: "MTD", dataKey: "MTD" },
       ],
       margin: { top: 70, right: 14, bottom: 0, left: 14 },
     });
-    doc.save(`${date.up}_${date.low}`);
+    doc.save(`${date.low}_${date.up}`);
   };
 
   const onClick = () => {
-    fetch(`https://enigmatic-woodland-79956.herokuapp.com/report?lt=${date.low}&gt=${date.up}`)
+    fetch(
+      `https://enigmatic-woodland-79956.herokuapp.com/report?lt=${date.low}&gt=${date.up}`
+    )
       .then((response) => response.json())
       .then((data) => {
         setRows([]);
@@ -104,26 +117,26 @@ const Report: React.SFC<ReportProps> = () => {
             id: uid(),
             name: dealer,
             daily: data.tOrders[dealer],
-            MTD:
-              Sum(
-                data.orders[dealer].map(
-                  (order: {
-                    TTNO: string;
-                    date: string;
-                    Name: string;
-                    "Bill Qty": number;
-                    id: string;
-                  }) => Number(order["Bill Qty"])
-                )
-              ) || 0.0,
+            MTD: Sum(
+              data.orders[dealer].map(
+                (order: {
+                  TTNO: string;
+                  date: string;
+                  Name: string;
+                  "Bill Qty": number;
+                  id: string;
+                }) => Number(order["Bill Qty"])
+              ) || 0.0
+            ),
           };
 
-          setDate({ low: data.lowerDate, up: data.upperDate });
+          
           setRows((prevRows) => [...Array.from(new Set([...prevRows, row]))]);
         });
+        setDate({ low: data.lowerDate, up: data.upperDate });
         setIsLoading(false);
       });
-  }
+  };
 
   if (isLoading) {
     return (
@@ -136,14 +149,12 @@ const Report: React.SFC<ReportProps> = () => {
   return (
     <div className="">
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <Grid container justify="center" alignItems="center" >
+        <Grid container justify="center" alignItems="center">
           <KeyboardDatePicker
-            format="yyyy-mm-dd"
             margin="normal"
             id="date-picker-inline"
             label="Date picker inline"
             value={date.low}
-            
             onChange={(value) =>
               setDate((prevDate) => {
                 if (!value) return prevDate;
@@ -163,13 +174,16 @@ const Report: React.SFC<ReportProps> = () => {
             margin="normal"
             id="date-picker-dialog"
             label="Date picker dialog"
-            format="yyyy-mm-dd"
             value={date.up}
-            
             onChange={(value) =>
               setDate((prevDate) => {
                 if (!value) return prevDate;
-                return { ...prevDate, up:`${value.getFullYear()}-${value.getMonth() +1}-${value.getDate()}` };
+                return {
+                  ...prevDate,
+                  up: `${value.getFullYear()}-${
+                    value.getMonth() + 1
+                  }-${value.getDate()}`,
+                };
               })
             }
             KeyboardButtonProps={{
@@ -181,14 +195,25 @@ const Report: React.SFC<ReportProps> = () => {
           </Button>
         </Grid>
       </MuiPickersUtilsProvider>
+      
       <DataTable
         columns={[
           { field: "name", headerName: "Name", flex: 1 },
           { field: "daily", headerName: "Daily", flex: 1 },
           { field: "MTD", headerName: "MTD", flex: 1 },
         ]}
-        rows={rows}
-        checkboxSelection={false}
+
+        height={600}
+        rows={[
+          ...rows,
+          {
+            id: uid(),
+            name: "Total",
+            daily: Sum(rows.map((row) => Number(row.daily))),
+            MTD: Sum(rows.map((row) => Number(row.MTD))),
+          },
+        ]}
+        checkboxSelection={true}
       />
       <Button variant="outlined" color="primary" onClick={genratePDF}>
         Generate PDF
