@@ -21,10 +21,11 @@ const Report: React.SFC<ReportProps> = () => {
       MTD: string;
       daily: string;
     }>
-  >([]);
+    >([]);
   const [date, setDate] = useState({
     up: "",
     low: "",
+    cd:"",
   });
   const Sum = (arr: Array<number>): string => {
     let final = 0;
@@ -40,6 +41,7 @@ const Report: React.SFC<ReportProps> = () => {
     fetch(`https://enigmatic-woodland-79956.herokuapp.com/report`)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         Object.keys(data.orders).forEach((dealer) => {
           const row = {
             id: uid(),
@@ -58,8 +60,8 @@ const Report: React.SFC<ReportProps> = () => {
                 )
               ) || '0.000',
           };
-
-          setDate({ low: data.lowerDate, up: data.upperDate });
+          
+          setDate({ low: data.lowerDate, up: data.upperDate , cd :data.reqDate });
           setRows((prevRows) => [...Array.from(new Set([...prevRows, row]))]);
         });
         setIsLoading(false);
@@ -107,7 +109,7 @@ const Report: React.SFC<ReportProps> = () => {
 
   const onClick = () => {
     fetch(
-      `https://enigmatic-woodland-79956.herokuapp.com/report?lt=${date.low}&gt=${date.up}`
+      `https://enigmatic-woodland-79956.herokuapp.com/report?lt=${date.low}&gt=${date.up}&cd=${date.cd}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -133,7 +135,7 @@ const Report: React.SFC<ReportProps> = () => {
           
           setRows((prevRows) => [...Array.from(new Set([...prevRows, row]))]);
         });
-        setDate({ low: data.lowerDate, up: data.upperDate });
+        setDate({ low: data.lowerDate, up: data.upperDate,cd:data.reqDate});
         setIsLoading(false);
       });
   };
@@ -151,9 +153,29 @@ const Report: React.SFC<ReportProps> = () => {
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Grid container justify="center" alignItems="center">
           <KeyboardDatePicker
-            margin="normal"
+            margin="dense"
             id="date-picker-inline"
-            label="Date picker inline"
+            label="Date For Daily"
+            value={date.cd}
+            onChange={(value) =>
+              setDate((prevDate) => {
+                if (!value) return prevDate;
+                return {
+                  ...prevDate,
+                  cd: `${value.getFullYear()}-${
+                    value.getMonth() + 1
+                  }-${value.getDate()}`,
+                };
+              })
+            }
+            KeyboardButtonProps={{
+              "aria-label": "change date",
+            }}
+          />
+          <KeyboardDatePicker
+            margin="dense"
+            id="date-picker-inline"
+            label="Lower Limit"
             value={date.low}
             onChange={(value) =>
               setDate((prevDate) => {
@@ -171,9 +193,9 @@ const Report: React.SFC<ReportProps> = () => {
             }}
           />
           <KeyboardDatePicker
-            margin="normal"
+            margin="dense"
             id="date-picker-dialog"
-            label="Date picker dialog"
+            label="Upper Limit"
             value={date.up}
             onChange={(value) =>
               setDate((prevDate) => {
@@ -195,14 +217,13 @@ const Report: React.SFC<ReportProps> = () => {
           </Button>
         </Grid>
       </MuiPickersUtilsProvider>
-      
+
       <DataTable
         columns={[
           { field: "name", headerName: "Name", flex: 1 },
           { field: "daily", headerName: "Daily", flex: 1 },
           { field: "MTD", headerName: "MTD", flex: 1 },
         ]}
-
         height={600}
         rows={[
           ...rows,
