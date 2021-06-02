@@ -28,7 +28,7 @@ const [currentDealer, setCurrentDealer] = useState<string>("");
       [dealer: string]: Array<OrderProp>;
     }>();
   const onFileInput = (e: any) => {
-    console.log(e.target.files);
+   
     setFile(e.target.files);
   };
   const onClick = (e: any) => {
@@ -59,8 +59,8 @@ const [currentDealer, setCurrentDealer] = useState<string>("");
           setDealersInfo(dealersInfo);
           setUploadLoading(false);
         }).catch(err => {
-          console.log(err)
-          alert("Duplicate");
+         
+          alert("Errrrrrr");
         });
     };
   };

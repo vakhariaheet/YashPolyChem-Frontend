@@ -41,7 +41,7 @@ const Report: React.SFC<ReportProps> = () => {
     fetch(`https://enigmatic-woodland-79956.herokuapp.com/report`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+
         Object.keys(data.orders).forEach((dealer) => {
           const row = {
             id: uid(),
@@ -61,9 +61,10 @@ const Report: React.SFC<ReportProps> = () => {
               ) || '0.000',
           };
           
-          setDate({ low: data.lowerDate, up: data.upperDate , cd :data.reqDate });
+          
           setRows((prevRows) => [...Array.from(new Set([...prevRows, row]))]);
         });
+        setDate({ low: data.lowerDate, up: data.upperDate, cd: data.reqDate });
         setIsLoading(false);
       });
   }, []);
@@ -156,6 +157,7 @@ const Report: React.SFC<ReportProps> = () => {
             margin="dense"
             id="date-picker-inline"
             label="Date For Daily"
+            InputLabelProps={{ shrink: true }}
             value={date.cd}
             onChange={(value) =>
               setDate((prevDate) => {
@@ -176,6 +178,7 @@ const Report: React.SFC<ReportProps> = () => {
             margin="dense"
             id="date-picker-inline"
             label="Lower Limit"
+            InputLabelProps={{ shrink: true }}
             value={date.low}
             onChange={(value) =>
               setDate((prevDate) => {
@@ -197,6 +200,7 @@ const Report: React.SFC<ReportProps> = () => {
             id="date-picker-dialog"
             label="Upper Limit"
             value={date.up}
+            InputLabelProps={{ shrink: true }}
             onChange={(value) =>
               setDate((prevDate) => {
                 if (!value) return prevDate;

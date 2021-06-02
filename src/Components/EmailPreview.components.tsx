@@ -39,7 +39,7 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [groupOrders, setGroupOrders] = useState<Array<OrderProp>>();
   const Sum = (arr: Array<number>) => {
-    console.log(arr);
+
     let final = 0;
     arr.map((num) => {
       final += num;
