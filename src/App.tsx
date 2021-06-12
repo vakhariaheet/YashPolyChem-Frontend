@@ -13,7 +13,7 @@ import Report from "./Pages/Report.pages";
 function App() {
   const [lastUpdated, setLastUpdated] = useState("");
   useEffect(() => {
-    fetch("https://enigmatic-woodland-79956.herokuapp.com/lastupdated")
+    fetch(`${process.env.REACT_APP_SERVER_URL}/lastupdated`)
       .then((response) => response.json())
       .then((data) => setLastUpdated(data.last_updated));
   }, []);

@@ -38,7 +38,7 @@ const Report: React.SFC<ReportProps> = () => {
   };
   useEffect(() => {
     setIsLoading(true);
-    fetch(`https://enigmatic-woodland-79956.herokuapp.com/report`)
+    fetch(`${process.env.REACT_APP_SERVER_URL}/report`)
       .then((response) => response.json())
       .then((data) => {
 
@@ -110,7 +110,7 @@ const Report: React.SFC<ReportProps> = () => {
 
   const onClick = () => {
     fetch(
-      `https://enigmatic-woodland-79956.herokuapp.com/report?lt=${date.low}&gt=${date.up}&cd=${date.cd}`
+      `${process.env.REACT_APP_SERVER_URL}/report?lt=${date.low}&gt=${date.up}&cd=${date.cd}`
     )
       .then((response) => response.json())
       .then((data) => {

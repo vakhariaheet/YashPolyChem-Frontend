@@ -31,13 +31,13 @@ const Orders: React.SFC<OrdersProps> = () => {
   });
   
   useEffect(() => {
-    fetch("https://enigmatic-woodland-79956.herokuapp.com/orders")
+    fetch(`${process.env.REACT_APP_SERVER_URL}/orders`)
       .then((response) => response.json())
       .then(({orders,upperDate,lowerDate}) => {
         setOrders(orders);
          setDate({ low: lowerDate, up: upperDate });
       });
-    fetch("https://enigmatic-woodland-79956.herokuapp.com/dealers")
+    fetch(`${process.env.REACT_APP_SERVER_URL}/dealers`)
       .then((response) => response.json())
       .then((dealers) => {
         const dealersInfo: {
@@ -56,7 +56,7 @@ const Orders: React.SFC<OrdersProps> = () => {
       });
   }, []);
   const onClick = () => {
-    fetch(`https://enigmatic-woodland-79956.herokuapp.com/orders?lt=${date.low}&gt=${date.up}`)
+    fetch(`${process.env.REACT_APP_SERVER_URL}/orders?lt=${date.low}&gt=${date.up}`)
       .then((response) => response.json())
       .then((data) => {
         const {orders,lowerDate,upperDate} = data
