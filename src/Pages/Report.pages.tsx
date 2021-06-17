@@ -112,6 +112,7 @@ const Report: React.SFC<ReportProps> = () => {
     fetch(
       `${process.env.REACT_APP_SERVER_URL}/report?lt=${date.low}&gt=${date.up}&cd=${date.cd}`
     )
+    
       .then((response) => response.json())
       .then((data) => {
         setRows([]);
