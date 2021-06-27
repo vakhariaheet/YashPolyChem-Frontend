@@ -57,7 +57,7 @@ const EmailPreview: React.SFC<EmailPreviewProps> = ({
       })
       .sort((a, b) => a.getTime() - b.getTime());
     const date = dates[dates.length - 1];
-    return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
+    return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
   };
   const sendSingleEmail = (dealer: string | Array<string>) => {
     if (typeof dealer === "string") {
